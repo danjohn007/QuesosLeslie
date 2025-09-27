@@ -67,8 +67,11 @@ class BaseController {
     }
     
     protected function jsonResponse($data, $status_code = 200) {
-        http_response_code($status_code);
-        header('Content-Type: application/json');
+        // Check if headers have been sent already
+        if (!headers_sent()) {
+            http_response_code($status_code);
+            header('Content-Type: application/json');
+        }
         echo json_encode($data);
         exit;
     }
@@ -103,7 +106,10 @@ class BaseController {
     }
     
     protected function showError($title, $message, $code = 404) {
-        http_response_code($code);
+        // Check if headers have been sent already
+        if (!headers_sent()) {
+            http_response_code($code);
+        }
         $this->loadView('errors/error', [
             'title' => $title,
             'message' => $message,
@@ -112,8 +118,16 @@ class BaseController {
     }
     
     protected function showDatabaseError($message) {
-        http_response_code(500);
+        // Check if headers have been sent already
+        if (!headers_sent()) {
+            http_response_code(500);
+        }
+        
+        // Use output buffering to prevent further header issues
+        ob_start();
         include 'views/errors/database_error.php';
+        $content = ob_get_clean();
+        echo $content;
     }
     
     protected function validateInput($data, $rules) {

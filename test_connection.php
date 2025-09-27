@@ -10,7 +10,7 @@ require_once 'config/database.php';
 
 // Auto-detect base URL
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'];
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $path = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $base_url = $protocol . '://' . $host . $path . '/';
 

@@ -35,6 +35,9 @@ class AuthController extends BaseController {
             'flash_message' => $this->getFlashMessage()
         ];
         
+        // Extract data variables
+        extract($data);
+        
         // Load login view without layout
         include 'views/auth/login.php';
     }
