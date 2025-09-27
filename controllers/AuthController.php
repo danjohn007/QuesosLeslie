@@ -12,14 +12,14 @@ class AuthController extends BaseController {
     private $userModel;
     
     public function __construct() {
-        $this->db = Database::getInstance();
+        // Call parent constructor which handles database and authentication
+        parent::__construct();
         $this->userModel = new User();
-        // Don't call parent constructor to avoid authentication check
     }
     
     public function login() {
         if (isset($_SESSION['user_id'])) {
-            $this->redirect('');
+            $this->redirect('home');
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -29,7 +29,7 @@ class AuthController extends BaseController {
         }
     }
     
-    private function showLoginForm() {
+    protected function showLoginForm() {
         $data = [
             'page_title' => 'Iniciar Sesión',
             'flash_message' => $this->getFlashMessage()
@@ -39,7 +39,7 @@ class AuthController extends BaseController {
         include 'views/auth/login.php';
     }
     
-    private function processLogin() {
+    protected function processLogin() {
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
         
@@ -62,7 +62,7 @@ class AuthController extends BaseController {
                 // Log the login
                 $this->logActivity('LOGIN');
                 
-                $this->redirect('', 'Bienvenido al sistema', 'success');
+                $this->redirect('home', 'Bienvenido al sistema', 'success');
             } else {
                 $this->setFlashMessage('Usuario o contraseña incorrectos', 'error');
             }
@@ -271,5 +271,6 @@ class AuthController extends BaseController {
             error_log("Failed to log activity: " . $e->getMessage());
         }
     }
+
 }
 ?>

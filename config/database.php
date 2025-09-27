@@ -21,7 +21,7 @@ class Database {
             $this->connection = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (PDOException $e) {
             error_log("Database connection failed: " . $e->getMessage());
-            die("Database connection failed. Please check your configuration.");
+            throw new Exception("Database connection failed: " . $e->getMessage());
         }
     }
     
