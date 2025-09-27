@@ -10,7 +10,13 @@ class BaseController {
     protected $user_role;
     
     public function __construct() {
-        $this->db = Database::getInstance();
+        try {
+            $this->db = Database::getInstance();
+        } catch (Exception $e) {
+            // Database connection failed - handle gracefully
+            $this->showDatabaseError($e->getMessage());
+            exit;
+        }
         $this->checkAuthentication();
     }
     
@@ -103,6 +109,11 @@ class BaseController {
             'message' => $message,
             'code' => $code
         ]);
+    }
+    
+    protected function showDatabaseError($message) {
+        http_response_code(500);
+        include 'views/errors/database_error.php';
     }
     
     protected function validateInput($data, $rules) {

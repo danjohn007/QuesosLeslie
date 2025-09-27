@@ -1,1 +1,2 @@
 2025-09-26 19:54:54 - Error [2]: Undefined array key "HTTP_HOST" in /home/runner/work/QuesosLeslie/QuesosLeslie/test_connection.php on line 13
+2025-09-26 20:01:11 - Error [2]: http_response_code(): Cannot set response code - headers already sent (output started at /home/runner/work/QuesosLeslie/QuesosLeslie/index.php:8) in /home/runner/work/QuesosLeslie/QuesosLeslie/controllers/BaseController.php on line 115

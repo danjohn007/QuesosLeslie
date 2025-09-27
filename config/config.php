@@ -6,8 +6,8 @@
 
 // Database Configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'quesos_leslie');
-define('DB_USER', 'root');
+define('DB_NAME', 'laptopfi_quesosleslie');
+define('DB_USER', 'laptopfi_quesosleslie');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8');
 
