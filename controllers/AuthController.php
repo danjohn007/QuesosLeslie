@@ -12,34 +12,24 @@ class AuthController extends BaseController {
     private $userModel;
     
     public function __construct() {
-        try {
-            $this->db = Database::getInstance();
-            $this->userModel = new User();
-        } catch (Exception $e) {
-            // Database connection failed - handle gracefully
-            $this->showDatabaseError($e->getMessage());
-            exit;
-        }
-        // Don't call parent constructor to avoid authentication check
+        // Call parent constructor which handles database and authentication
+        parent::__construct();
+        $this->userModel = new User();
     }
     
     public function login() {
-        error_log("AuthController::login() called. User ID: " . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'not set'));
-        
         if (isset($_SESSION['user_id'])) {
-            error_log("User already logged in, redirecting to home");
-            $this->redirect('');
+            $this->redirect('home');
         }
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->processLogin();
         } else {
-            error_log("Showing login form");
             $this->showLoginForm();
         }
     }
     
-    private function showLoginForm() {
+    protected function showLoginForm() {
         $data = [
             'page_title' => 'Iniciar Sesión',
             'flash_message' => $this->getFlashMessage()
@@ -49,7 +39,7 @@ class AuthController extends BaseController {
         include 'views/auth/login.php';
     }
     
-    private function processLogin() {
+    protected function processLogin() {
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
         
@@ -72,7 +62,7 @@ class AuthController extends BaseController {
                 // Log the login
                 $this->logActivity('LOGIN');
                 
-                $this->redirect('', 'Bienvenido al sistema', 'success');
+                $this->redirect('home', 'Bienvenido al sistema', 'success');
             } else {
                 $this->setFlashMessage('Usuario o contraseña incorrectos', 'error');
             }
@@ -282,76 +272,5 @@ class AuthController extends BaseController {
         }
     }
 
-    private function showDatabaseError($message) {
-        http_response_code(500);
-        include 'views/errors/database_error.php';
-    }
-
-    private function redirect($url, $message = null, $type = 'info') {
-        if ($message) {
-            $_SESSION['flash_message'] = [
-                'message' => $message,
-                'type' => $type
-            ];
-        }
-        
-        if (strpos($url, 'http') !== 0) {
-            $url = BASE_URL . ltrim($url, '/');
-        }
-        
-        header("Location: {$url}");
-        exit;
-    }
-
-    private function getFlashMessage() {
-        if (isset($_SESSION['flash_message'])) {
-            $message = $_SESSION['flash_message'];
-            unset($_SESSION['flash_message']);
-            return $message;
-        }
-        return null;
-    }
-
-    private function loadView($view, $data = []) {
-        extract($data);
-        
-        // Start output buffering
-        ob_start();
-        include "views/{$view}.php";
-        $content = ob_get_clean();
-        
-        // Load layout
-        include 'views/layout/main.php';
-    }
-
-    private function validateInput($data, $rules) {
-        $errors = [];
-        
-        foreach ($rules as $field => $rule_string) {
-            $rules_array = explode('|', $rule_string);
-            $value = isset($data[$field]) ? trim($data[$field]) : '';
-            
-            foreach ($rules_array as $rule) {
-                $rule_parts = explode(':', $rule);
-                $rule_name = $rule_parts[0];
-                
-                switch ($rule_name) {
-                    case 'required':
-                        if (empty($value)) {
-                            $errors[$field][] = 'Este campo es obligatorio';
-                        }
-                        break;
-                    case 'min_length':
-                        $min = (int) $rule_parts[1];
-                        if (strlen($value) < $min) {
-                            $errors[$field][] = "Debe tener al menos {$min} caracteres";
-                        }
-                        break;
-                }
-            }
-        }
-        
-        return $errors;
-    }
 }
 ?>
