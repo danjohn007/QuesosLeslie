@@ -6,9 +6,9 @@
 
 // Database Configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'laptopfi_quesosleslie');
-define('DB_USER', 'laptopfi_quesosleslie');
-define('DB_PASS', '');
+define('DB_NAME', 'fix360_quesosleslie');
+define('DB_USER', 'fix360_quesosleslie');
+define('DB_PASS', 'Danjohn007!');
 define('DB_CHARSET', 'utf8');
 
 // Application Configuration
